@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_DATABASE_URL")
+}
+
+enum Gender {
+  M
+  F
+}
+
+model Student  {
+  student_id       BigInt      @id @default(autoincrement())
+  full_name        String  @db.VarChar(255)
+  major_id         BigInt     
+  date_of_birth    DateTime   @db.Date
+  gender           Gender
+  cohort_year      BigInt    
+  major        Major @relation(fields: [major_id], references: [major_id]) 
+
+  @@map("students") 
+}
+
+
+model Major {
+  
+  major_id  BigInt      @id @default(autoincrement())
+  major     String
+  students Student[]
+
+  @@map("majors") 
+}

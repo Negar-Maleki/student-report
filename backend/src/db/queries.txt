@@ -1,0 +1,48 @@
+CREATE TABLE majors (
+  major_id INT8 NOT NULL DEFAULT unique_rowid(),
+  major STRING NOT NULL,
+  CONSTRAINT majors_pkey PRIMARY KEY (major_id ASC)
+)
+
+CREATE TABLE public.students (
+  student_id INT8 NOT NULL DEFAULT unique_rowid(),
+  full_name VARCHAR(255) NOT NULL,
+  major_id INT8 NULL,
+  date_of_birth DATE NULL,
+  gender CHAR NULL,
+  cohort_year INT8 NULL,
+  CONSTRAINT students_pkey PRIMARY KEY (student_id ASC),
+  CONSTRAINT students_major_id_fkey FOREIGN KEY (major_id) REFERENCES public.majors(major_id)
+)
+
+INSERT INTO majors (major_name)
+VALUES ('Industrial Engineering'), ('Computer Science');
+
+INSERT INTO students (full_name, major_id, date_of_birth, gender, cohort_year)
+VALUES
+  ('Jane Smith', 988210413436370945, '1999-03-15', 'F', 2023),
+  ('Michael Johnson', 988210413436469249, '2000-11-08', 'M', 2022),
+  ('Emily Brown', 988210914822291457, '2001-05-22', 'F', 2024),
+  ('David Wilson', 988210914822291457, '1998-07-12', 'M', 2021),
+  ('Olivia Taylor', 988210914822389761, '2002-09-04', 'F', 2023),
+  ('William Anderson', 988210914822422529, '2001-12-28', 'M', 2022),
+  ('Sophia Thompson', 988210914822455297, '2000-04-17', 'F', 2023),
+  ('Ethan Davis', 988210914822422529, '1999-08-03', 'M', 2021),
+  ('Ava Miller', 988210914822455297, '2002-02-11', 'F', 2024),
+  ('Noah Hernandez', 988210413436370945, '2001-06-25', 'M', 2022);
+
+
+SELECT 
+    s.student_id, 
+    s.full_name, 
+    m.major, 
+s.major_id,
+    s.date_of_birth, 
+    s.gender, 
+    s.cohort_year
+FROM 
+    students s
+INNER JOIN majors m ON s.major_id = m.major_id;
+
+ALTER TABLE public.students
+  ALTER COLUMN full_name SET NOT NULL;

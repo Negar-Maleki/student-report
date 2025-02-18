@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    restart: always
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # migrate:
+  #   build: ./migrate
+  #   # command: [
+  #   #     "sh",
+  #   #     "-c",
+  #   #     "npx prisma migrate deploy --name init && npx prisma db seed",
+  #   #   ] # Run migration script before backend starts
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     DATABASE_URL: ${POSTGRES_DATABASE_URL}
+
+  backend:
+    build: ./backend
+    container_name: backend-app
+    depends_on:
+      - postgres
+    ports:
+      - "${BACKEND_PORT}:3030"
+    environment:
+      - DATABASE_URL=${DATABASE_URL} # Online database connection
+      - FRONTEND_URL=${FRONTEND_URL} # Online frontend connection for cors
+      - NODE_ENV=development
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - GITHUB_CALLBACK_URL=${GITHUB_CALLBACK_URL}
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_BACKEND_URL=${BACKEND_URL}
+    container_name: frontend-app
+    ports:
+      - "${FRONTEND_PORT}:80"
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=${BACKEND_URL} # Online backend connection for cors
+      - NODE_ENV=development
+
+volumes:
+  postgres_data:
