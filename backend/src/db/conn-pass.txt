@@ -1,6 +1,0 @@
-password:
-GtsL5s1O7b9W8E6dRt84PQ
-
-connection:
-
-postgresql://negar:GtsL5s1O7b9W8E6dRt84PQ@abi-is-king-11654.6wr.aws-us-west-2.cockroachlabs.cloud:26257/students-db?sslmode=verify-full
